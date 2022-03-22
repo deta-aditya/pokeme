@@ -1,26 +1,20 @@
-import { BrowserRouter, Route, Routes, useParams } from 'react-router-dom'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { PokemonDetail } from './PokemonDetail'
 import { MyPokemons } from './MyPokemons'
 import { Home } from './Home'
+import { OwnedPokemonsProvider } from './contexts/owned-pokemons'
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home/>} />
-        <Route path="/my-pokemons" element={<MyPokemons/>} />
-        <Route path="/pokemons/:name" element={<PokemonDetail />} />
-      </Routes>
-    </BrowserRouter>
-  )
-}
-
-function PokemonDetail() {
-  const params = useParams<'name'>()
-
-  return (
-    <div>
-      Detail for {params.name}
-    </div>
+    <OwnedPokemonsProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Home/>} />
+          <Route path="/my-pokemons" element={<MyPokemons/>} />
+          <Route path="/pokemons/:name" element={<PokemonDetail />} />
+        </Routes>
+      </BrowserRouter>
+    </OwnedPokemonsProvider>
   )
 }
 
