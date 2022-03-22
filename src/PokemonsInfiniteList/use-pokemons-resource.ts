@@ -1,15 +1,13 @@
-import { RefObject, useEffect, useReducer, useRef } from "react"
+import { useEffect, useReducer } from "react"
 import { PokemonListItem, PokemonsResource } from "../resources/types"
 
 type UsePokemonsResourceParams = { 
   fetchPokemons: (prevResource: PokemonsResource) => Promise<PokemonsResource>,
-  scrollThreshold: number,
 }
 
-type UsePokemonsResourceReturns<T> = { 
-  scrollerRef: RefObject<T>, 
-  onScroll: () => void, 
-  pokemons: PokemonListItem[] 
+type UsePokemonsResourceReturns = { 
+  pokemons: PokemonListItem[]
+  fetchNextResource: () => void
 }
 
 type State = {
@@ -46,15 +44,15 @@ const reducer = (state: State, action: Actions): State => {
   }
 }
 
-function usePokemonsResource<T extends HTMLElement>({ fetchPokemons, scrollThreshold }: UsePokemonsResourceParams): UsePokemonsResourceReturns<T> {
+function usePokemonsResource({ fetchPokemons }: UsePokemonsResourceParams): UsePokemonsResourceReturns {
   const [state, dispatch] = useReducer(reducer, initialState)
   const { resource, isLoadingResource, pokemons } = state
 
-  useEffect(() => {
-    fetchNextResource()
-  }, [])
-
   const fetchNextResource = () => {
+    if (isLoadingResource) {
+      return
+    }
+
     dispatch({ type: 'start-loading' })
     fetchPokemons(resource)
       .then((resource) => {
@@ -62,21 +60,9 @@ function usePokemonsResource<T extends HTMLElement>({ fetchPokemons, scrollThres
       })
   }
 
-  const scrollerRef = useRef<T>(null)
-
-  const onScroll = () => {
-    const { scrollHeight, scrollTop, clientHeight } = (scrollerRef.current as T)
-    const visibleThreshold = scrollHeight - clientHeight - scrollThreshold
-
-    if (scrollTop >= visibleThreshold && !isLoadingResource) {
-      fetchNextResource()
-    }
-  }
-
   return {
-    scrollerRef,
-    onScroll,
     pokemons,
+    fetchNextResource,
   }
 }
 

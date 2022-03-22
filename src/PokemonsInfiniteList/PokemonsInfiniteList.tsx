@@ -1,12 +1,22 @@
+import { useEffect } from "react"
 import { Link } from "react-router-dom"
 import { usePokemonsResource } from './use-pokemons-resource'
+import { useInfiniteScroll } from './use-infinite-scroll'
 import { createRestAPIPokemonsList } from '../resources/pokemons-rest-api'
 
 function PokemonsInfiniteList() {
-  const { scrollerRef, onScroll, pokemons } = usePokemonsResource<HTMLDivElement>({
+  const { pokemons, fetchNextResource } = usePokemonsResource({
     fetchPokemons: createRestAPIPokemonsList('https://pokeapi.co/api/v2/pokemon/', 20),
-    scrollThreshold: 20,
   })
+
+  const { scrollerRef, onScroll } = useInfiniteScroll<HTMLDivElement>({
+    pxThreshold: 20,
+    onThresholdPassed: fetchNextResource,
+  })
+
+  useEffect(() => {
+    fetchNextResource()
+  }, [])
 
   return (
     <div 
