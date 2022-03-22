@@ -1,14 +1,15 @@
-import { useState } from 'react'
-import logo from './logo.svg'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { MyPokemons } from './MyPokemons'
+import { Home } from './Home'
 
 function App() {
   return (
-    <>
-      <header>
-        <h1>Pokeme</h1>
-      </header>
-      <main>Hello, world!</main>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home/>} />
+        <Route path="/my-pokemons" element={<MyPokemons/>} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
