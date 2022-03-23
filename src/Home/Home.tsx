@@ -1,5 +1,6 @@
 import { NavBar } from "../NavBar"
 import { PokemonsInfiniteList } from "../PokemonsInfiniteList";
+import { TotalPokemonsOwned } from "../TotalPokemonsOwned";
 
 function Home() {
   return (
@@ -14,6 +15,7 @@ function Home() {
         flexGrow: 0,
       }}>
         <h1>Pokeme</h1>
+        <TotalPokemonsOwned />
         <NavBar />
       </header>
       <PokemonsInfiniteList />

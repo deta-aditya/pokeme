@@ -25,6 +25,7 @@ type OwnedPokemonsAction =
   | { type: 'try-catch', pokemon: CaughtPokemon, isCaught: boolean }
   | { type: 'cancel-caught' }
   | { type: 'save-caught', nickname: string }
+  | { type: 'release', nickname: string }
 
 const initialState: OwnedPokemonsState = {
   pokemons: [],
@@ -58,6 +59,11 @@ const reducer: Reducer<OwnedPokemonsState, OwnedPokemonsAction> = (state, action
       return {
         ...state,
         recentlyCaught: { type: 'none' },
+      }
+    case 'release':
+      return {
+        ...state,
+        pokemons: state.pokemons.filter(pokemon => pokemon.nickname !== action.nickname),
       }
   }
 }
