@@ -1,5 +1,5 @@
 import { useOwnedPokemons } from "../contexts/owned-pokemons"
-import { PokemonDetailsData } from "./types"
+import { PokemonDetailsData } from "../resources/types"
 
 type CatchButtonProps = {
   pokemon: PokemonDetailsData

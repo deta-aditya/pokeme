@@ -3,21 +3,18 @@ import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import { CatchResultModal } from './CatchResultModal'
 import { CatchButton } from './CatchButton'
-import { PokemonDetailsData } from './types'
+import { PokemonDetailsData } from '../resources/types'
+import { createRestAPIPokemonDetails } from "../resources/pokemons-rest-api"
 
 function PokemonDetail() {
   const { name } = useParams<'name'>()
   const [details, setDetails] = useState<PokemonDetailsData | null>(null)
+  const getPokemonDetails = createRestAPIPokemonDetails('https://pokeapi.co/api/v2/pokemon/')
 
   useEffect(() => {
-    axios.get(`https://pokeapi.co/api/v2/pokemon/${name}`)
-      .then(response => ({
-        name: response.data.name,
-        picture: response.data.sprites.front_default,
-        moves: response.data.moves.map(({ move: { name } }: { move: { name: string }}) => name),
-        types: response.data.types.map(({ type: { name } }: { type: { name: string }}) => name),
-      }) as unknown as PokemonDetailsData)
-      .then(setDetails)
+    if (name !== undefined) {
+      getPokemonDetails(name).then(setDetails)
+    }
   }, [])
 
   return (
