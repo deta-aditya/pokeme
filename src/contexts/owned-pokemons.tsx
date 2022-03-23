@@ -1,4 +1,4 @@
-import { createContext, Dispatch, Reducer, useContext, useReducer } from "react";
+import { createContext, Dispatch, Reducer, useContext, useEffect, useReducer } from "react";
 
 type OwnedPokemon = {
   name: string,
@@ -19,6 +19,7 @@ type RecentlyCaught =
 type OwnedPokemonsState = {
   pokemons: OwnedPokemon[],
   recentlyCaught: RecentlyCaught,
+  isStored: boolean
 }
 
 type OwnedPokemonsAction = 
@@ -26,10 +27,12 @@ type OwnedPokemonsAction =
   | { type: 'cancel-caught' }
   | { type: 'save-caught', nickname: string }
   | { type: 'release', nickname: string }
+  | { type: 'refresh-store', pokemons: OwnedPokemon[] }
 
 const initialState: OwnedPokemonsState = {
   pokemons: [],
   recentlyCaught: { type: 'none' },
+  isStored: true,
 }
 
 const reducer: Reducer<OwnedPokemonsState, OwnedPokemonsAction> = (state, action) => {
@@ -52,6 +55,7 @@ const reducer: Reducer<OwnedPokemonsState, OwnedPokemonsAction> = (state, action
             ...state.pokemons, 
           ],
           recentlyCaught: { type: 'none' },
+          isStored: false,
         }
       }
       return state
@@ -64,6 +68,13 @@ const reducer: Reducer<OwnedPokemonsState, OwnedPokemonsAction> = (state, action
       return {
         ...state,
         pokemons: state.pokemons.filter(pokemon => pokemon.nickname !== action.nickname),
+        isStored: false,
+      }
+    case 'refresh-store':
+      return {
+        ...state,
+        pokemons: action.pokemons,
+        isStored: true,
       }
   }
 }
@@ -82,10 +93,27 @@ const useOwnedPokemons = () => useContext(OwnedPokemonsContext)
 
 type OwnedPokemonsProviderProps = {
   children: React.ReactNode
+  loadPokemons: () => Promise<OwnedPokemon[]>
+  savePokemons: (pokemons: OwnedPokemon[]) => Promise<void>
 }
 
-function OwnedPokemonsProvider({ children }: OwnedPokemonsProviderProps) {
+function OwnedPokemonsProvider({ children, loadPokemons, savePokemons }: OwnedPokemonsProviderProps) {
   const [state, dispatch] = useReducer(reducer, initialState)
+
+  useEffect(() => {
+    loadPokemons()
+      .then(pokemons => dispatch({ type: 'refresh-store', pokemons }))
+  }, [])
+
+  useEffect(() => {
+    if (state.isStored) {
+      return
+    }
+
+    savePokemons(state.pokemons)
+      .then(loadPokemons)
+      .then(pokemons => dispatch({ type: 'refresh-store', pokemons }))
+  }, [state.isStored])
 
   return (
     <OwnedPokemonsContext.Provider value={{state, dispatch}}>
@@ -95,4 +123,4 @@ function OwnedPokemonsProvider({ children }: OwnedPokemonsProviderProps) {
 }
 
 export { OwnedPokemonsProvider, useOwnedPokemons }
-export type { OwnedPokemonsState }
+export type { OwnedPokemon }
