@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { PokemonDetailsData } from "./types"
+import { PokemonDetailsData } from "../resources/types"
 import { useOwnedPokemons } from "../contexts/owned-pokemons"
 
 type CatchResultModalProps = {
