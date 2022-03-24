@@ -5,7 +5,6 @@ import PokemonLogoSvg from '../assets/pokemon_logo_gray.svg'
 import { usePokemonsResource } from './use-pokemons-resource'
 import { useScrollListener } from '../hooks/use-scroll-listener'
 import { createRestAPIPokemonsList } from '../resources/pokemons-rest-api'
-import { AppTheme, useAppTheme } from "../contexts/app-theme"
 
 function PokemonsInfiniteList() {
   const { pokemons, fetchNextResource } = usePokemonsResource({
@@ -17,8 +16,6 @@ function PokemonsInfiniteList() {
     fromBottom: true,
     onThresholdPassed: fetchNextResource,
   })
-
-  const theme = useAppTheme()
 
   useEffect(() => {
     fetchNextResource()
@@ -33,7 +30,6 @@ function PokemonsInfiniteList() {
         {pokemons.map(({ name }, idx) => (
           <PokemonListItem 
             to={`/pokemons/${name}`}
-            theme={theme}
             key={idx}
           >
             <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/35.png" alt={`${name}'s picture`} />
@@ -57,7 +53,7 @@ const Scroller = styled.div({
   },
 })
 
-const PokemonListItem = styled(Link)(({ theme }: { theme: AppTheme }) => ({
+const PokemonListItem = styled(Link)(({ theme }) => ({
   width: '135px',
   height: '135px',
   display: 'flex',

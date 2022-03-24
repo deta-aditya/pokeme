@@ -1,13 +1,10 @@
 import styled from "@emotion/styled"
 import PokemonLogoSvg from '../assets/pokemon_logo.svg'
-import { AppTheme, useAppTheme } from "../contexts/app-theme"
 import { NavBar } from "../NavBar"
 
 function MainHeader() {
-  const theme = useAppTheme()
-
   return (
-    <Header theme={theme}>
+    <Header>
       <h1>
         <PokemonLogo src={PokemonLogoSvg} alt="Pokemon logo" />
         Pokeme
@@ -17,7 +14,7 @@ function MainHeader() {
   )
 }
 
-const Header = styled.header(({ theme }: { theme: AppTheme }) => ({
+const Header = styled.header(({ theme }) => ({
   padding: '2rem 1.25rem 0',
   borderBottom: `1px solid ${theme.baseBorderColor}`,
   flexGrow: 0,

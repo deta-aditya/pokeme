@@ -5,14 +5,20 @@ import { CatchButton } from './CatchButton'
 import { PokemonDetailsData } from '../resources/types'
 import { createRestAPIPokemonDetails } from "../resources/pokemons-rest-api"
 import styled from "@emotion/styled"
-import { AppTheme, useAppTheme } from "../contexts/app-theme"
 import PokemonLogoSvg from '../assets/pokemon_logo_gray.svg'
 import { useScrollListener } from "../hooks/use-scroll-listener"
+import { TabLink } from "../TabLink"
+import { useTheme } from "@emotion/react"
 
 function PokemonDetail() {
   const { name } = useParams<'name'>()
   const [details, setDetails] = useState<PokemonDetailsData | null>(null)
   const getPokemonDetails = createRestAPIPokemonDetails('https://pokeapi.co/api/v2/pokemon/')
+  useEffect(() => {
+    if (name !== undefined) {
+      getPokemonDetails(name).then(setDetails)
+    }
+  }, [])
 
   const [isScrollPassed, setIsScrollPassed] = useState(false)
   const { scrollerRef, onScroll } = useScrollListener<HTMLDivElement>({ 
@@ -28,43 +34,39 @@ function PokemonDetail() {
       }
     }
   })
-  
-  const theme = useAppTheme()
 
-  useEffect(() => {
-    if (name !== undefined) {
-      getPokemonDetails(name).then(setDetails)
-    }
-  }, [])
+  const theme = useTheme()
 
   return (
-    <PageContainer theme={theme}>
+    <PageContainer>
       {details !== null ? <CatchResultModal pokemon={details} /> : <></>}
-      <HeaderSection theme={theme} isScrollPassed={isScrollPassed}>
+      <HeaderSection isScrollPassed={isScrollPassed}>
         <div>
-          <BackLink theme={theme} to="/">&lt; Back</BackLink>
+          <BackLink to="/">&lt; Back</BackLink>
         </div>
         <h1>{name}</h1>
         <div>&nbsp;</div>
       </HeaderSection>
       <ContentSection ref={scrollerRef} onScroll={onScroll} >
-        <TopSection theme={theme}>
+        <TopSection>
           <img src={details?.picture} alt={`${name}'s picture`} />
           <h1>{details?.name}</h1>
-          <PokemonTypes theme={theme}>
+          <PokemonTypes>
             {details?.types.map((type, idx) => (
               <div key={idx}>{type}</div>
             ))}
           </PokemonTypes>
-          <DetailsNav theme={theme}>
-            <div>
-              <RoundedCornerLeft theme={theme} />
+          <TabsContainer>
+            <TabLink
+              isActive 
+              insideBackgroundColor={theme.baseBackgroundColor}
+              outsideBackgroundColor={theme.whiteColor}
+            >
               Moves
-              <RoundedCornerRight theme={theme} />
-            </div>
-          </DetailsNav>
+            </TabLink>
+          </TabsContainer>
         </TopSection>
-        <MovesSection theme={theme}>
+        <MovesSection>
           {details?.moves.map((move, idx) => (
             <div key={idx}>{move.replace('-', ' ')}</div>
           ))}
@@ -77,19 +79,7 @@ function PokemonDetail() {
   )
 }
 
-const BackLink = styled(Link)(({ theme }: { theme: AppTheme }) => ({
-  fontWeight: 'bold',
-  textDecoration: 'none',
-  color: theme.accentColor,
-  paddingLeft: '1rem',
-}))
-
-const ContentSection = styled.div({
-  overflow: 'auto',
-  flexGrow: 0,
-})
-
-const PageContainer = styled.div(({ theme }: { theme: AppTheme }) => ({
+const PageContainer = styled.div(({ theme }) => ({
   display: 'flex',
   position: 'relative',
   flexDirection: 'column',
@@ -97,7 +87,7 @@ const PageContainer = styled.div(({ theme }: { theme: AppTheme }) => ({
   backgroundColor: theme.baseBackgroundColor,
 }))
 
-const HeaderSection = styled.header(({ theme, isScrollPassed }: { theme: AppTheme; isScrollPassed: boolean }) => ({
+const HeaderSection = styled.header<{ isScrollPassed: boolean }>(({ theme, isScrollPassed }) => ({
   position: 'absolute',
   display: 'flex',
   alignItems: 'center',
@@ -118,7 +108,19 @@ const HeaderSection = styled.header(({ theme, isScrollPassed }: { theme: AppThem
   }
 }))
 
-const TopSection = styled.div(({ theme }: { theme: AppTheme }) => ({
+const BackLink = styled(Link)(({ theme }) => ({
+  fontWeight: 'bold',
+  textDecoration: 'none',
+  color: theme.accentColor,
+  paddingLeft: '1rem',
+}))
+
+const ContentSection = styled.div({
+  overflow: 'auto',
+  flexGrow: 0,
+})
+
+const TopSection = styled.div(({ theme }) => ({
   paddingTop: '4rem',
   backgroundColor: theme.whiteColor,
   backgroundImage: `url(${PokemonLogoSvg})`,
@@ -138,7 +140,7 @@ const TopSection = styled.div(({ theme }: { theme: AppTheme }) => ({
   },
 }))
 
-const PokemonTypes = styled.div(({ theme }: { theme: AppTheme }) => ({
+const PokemonTypes = styled.div(({ theme }) => ({
   display: 'flex',
   justifyContent: 'center',
   gap: '0.5rem',
@@ -153,70 +155,12 @@ const PokemonTypes = styled.div(({ theme }: { theme: AppTheme }) => ({
   }
 }))
 
-const DetailsNav = styled.nav(({ theme }: { theme: AppTheme }) => ({
+const TabsContainer = styled.div(({ theme }) => ({
   display: 'flex',
-  margin: '2rem 0 0 1.25rem',
-  '& > div': {
-    color: '#000',
-    position: 'relative',
-    padding: '0.5rem 1.25rem',
-    textDecoration: 'none',
-    border: '1px solid',
-    borderColor: `${theme.baseBorderColor} ${theme.baseBorderColor} transparent`,
-    transform: 'translateY(1px)',
-    backgroundColor: theme.baseBackgroundColor,
-    borderRadius: '5px 5px 0 0',
-    '::before': {
-      content: '""',
-      display: 'block',
-      position: 'absolute',
-      left: '-5px',
-      bottom: '-1px',
-      width: '5px',
-      height: '5px',
-      backgroundColor: theme.baseBackgroundColor,
-    },
-    '::after': {
-      content: '""',
-      display: 'block',
-      position: 'absolute',
-      right: '-5px',
-      bottom: '-1px',
-      width: '5px',
-      height: '5px',
-      backgroundColor: theme.baseBackgroundColor,
-    },
-  }
+  margin: '2rem 0 0 1rem'
 }))
 
-const RoundedCornerLeft = styled.div(({ theme }: { theme: AppTheme }) => ({
-  position: 'absolute',
-  display: 'block',
-  left: '-6px',
-  bottom: '-1px',
-  width: '5px',
-  height: '5px',
-  borderRadius: '0 0 5px',
-  border: `solid ${theme.baseBorderColor}`,
-  borderWidth: '0 1px 1px 0',
-  backgroundColor: theme.whiteColor,
-}))
-
-const RoundedCornerRight = styled.div(({ theme }: { theme: AppTheme }) => ({
-  position: 'absolute',
-  display: 'block',
-  right: '-6px',
-  bottom: '-1px',
-  width: '5px',
-  height: '5px',
-  borderRadius: '0 0 0 5px',
-  border: `solid ${theme.baseBorderColor}`,
-  borderWidth: '0 0 1px 1px',
-  backgroundColor: theme.whiteColor,
-  zIndex: 9,
-}))
-
-const MovesSection = styled.div(({ theme }: { theme: AppTheme }) => ({
+const MovesSection = styled.div(({ theme }) => ({
   display: 'flex',
   margin: '1rem 0 4rem',
   flexDirection: 'column',

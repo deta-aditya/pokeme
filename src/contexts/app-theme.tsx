@@ -1,16 +1,6 @@
-import { StyledComponent } from "@emotion/styled"
-import { createContext, useContext } from "react"
+import { Theme, ThemeProvider } from "@emotion/react"
 
-type AppTheme = {
-  baseBackgroundColor: string
-  headerGradientColors: string
-  accentColor: string
-  blackColor: string
-  whiteColor: string
-  baseBorderColor: string
-}
-
-const appTheme: AppTheme = {
+const appTheme: Theme = {
   baseBackgroundColor: '#F8F8F8',
   headerGradientColors: `linear-gradient(
     180deg, 
@@ -24,24 +14,12 @@ const appTheme: AppTheme = {
   baseBorderColor: '#DFDFDF',
 }
 
-const AppThemeContext = createContext<AppTheme>(appTheme)
-
-const useAppTheme = () => useContext(AppThemeContext)
-
-const connectAppTheme = <CP, SCP, JP>(Component: StyledComponent<CP, SCP, JP>) => {
-  return (props: CP & SCP & JP) => {
-    const appTheme = useAppTheme()
-    return <Component theme={appTheme} {...props} />
-  }
-}
-
 function AppThemeProvider({ children }: { children: React.ReactNode }) {
   return (
-    <AppThemeContext.Provider value={appTheme}>
+    <ThemeProvider theme={appTheme}>
       {children}
-    </AppThemeContext.Provider>
+    </ThemeProvider>
   )
 }
 
-export { AppThemeProvider, useAppTheme, connectAppTheme }
-export type { AppTheme }
+export { AppThemeProvider }
