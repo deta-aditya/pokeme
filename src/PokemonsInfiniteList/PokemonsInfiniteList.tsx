@@ -5,6 +5,7 @@ import PokemonLogoSvg from '../assets/pokemon_logo_gray.svg'
 import { usePokemonsResource } from './use-pokemons-resource'
 import { useInfiniteScroll } from './use-infinite-scroll'
 import { createRestAPIPokemonsList } from '../resources/pokemons-rest-api'
+import { AppTheme, useAppTheme } from "../contexts/app-theme"
 
 function PokemonsInfiniteList() {
   const { pokemons, fetchNextResource } = usePokemonsResource({
@@ -15,6 +16,8 @@ function PokemonsInfiniteList() {
     pxThreshold: 20,
     onThresholdPassed: fetchNextResource,
   })
+
+  const theme = useAppTheme()
 
   useEffect(() => {
     fetchNextResource()
@@ -29,6 +32,7 @@ function PokemonsInfiniteList() {
         {pokemons.map(({ name }, idx) => (
           <PokemonListItem 
             to={`/pokemons/${name}`}
+            theme={theme}
             key={idx}
           >
             <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/35.png" alt={`${name}'s picture`} />
@@ -52,28 +56,29 @@ const Scroller = styled.div({
   },
 })
 
-const PokemonListItem = styled(Link)({
+const PokemonListItem = styled(Link)(({ theme }: { theme: AppTheme }) => ({
   width: '135px',
   height: '135px',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  border: '1px solid #eee',
+  border: `1px solid ${theme.baseBorderColor}`,
   borderRadius: '10px',
   margin: '0 0.75rem 0.75rem 0',
   textDecoration: 'none',
-  color: '#000',
+  color: theme.blackColor,
   fontWeight: 'bold',
   gap: '4px',
+  backgroundColor: theme.whiteColor,
   backgroundImage: `url(${PokemonLogoSvg})`,
   backgroundSize: '125px',
   backgroundRepeat: 'no-repeat',
   backgroundPosition: '45px 45px',
-  boxShadow: '0px 2px 3px 0px #eee',
+  boxShadow: '0px 2px 3px 0px #e0e0e0',
   img: {
     width: '75px',
   }
-})
+}))
 
 export { PokemonsInfiniteList }

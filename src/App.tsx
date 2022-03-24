@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { PokemonDetail } from './PokemonDetail'
 import { MyPokemons } from './MyPokemons'
 import { Home } from './Home'
+import { AppThemeProvider } from './contexts/app-theme'
 import { OwnedPokemon, OwnedPokemonsProvider } from './contexts/owned-pokemons'
 import { StoredOwnedPokemon, useLocalStorageOwnedPokemons } from "./storage/local-storage";
 
@@ -25,18 +26,20 @@ function App() {
   }
 
   return (
-    <OwnedPokemonsProvider 
-      loadPokemons={loadPokemons}
-      savePokemons={savePokemons}
-    >
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home/>} />
-          <Route path="/my-pokemons" element={<MyPokemons/>} />
-          <Route path="/pokemons/:name" element={<PokemonDetail />} />
-        </Routes>
-      </BrowserRouter>
-    </OwnedPokemonsProvider>
+    <AppThemeProvider>
+      <OwnedPokemonsProvider 
+        loadPokemons={loadPokemons}
+        savePokemons={savePokemons}
+      >
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Home/>} />
+            <Route path="/my-pokemons" element={<MyPokemons/>} />
+            <Route path="/pokemons/:name" element={<PokemonDetail />} />
+          </Routes>
+        </BrowserRouter>
+      </OwnedPokemonsProvider>
+    </AppThemeProvider>
   )
 }
 

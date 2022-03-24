@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import { Link, useMatch, useResolvedPath } from "react-router-dom";
+import { AppTheme, useAppTheme } from "../contexts/app-theme";
 
 type NavLinkProps = {
   to: string
@@ -8,15 +9,18 @@ type NavLinkProps = {
 
 function NavLink(props: NavLinkProps) {
   const { to, children } = props
+
   const resolved = useResolvedPath(to)
   const match = useMatch({ path: resolved.pathname, end: true })
   const isActive = match !== null
 
+  const theme = useAppTheme()
+
   return (
-    <Container to={to} isActive={isActive}>
-      <RoundedCornerLeft isActive={isActive} />
+    <Container to={to} isActive={isActive} theme={theme}>
+      <RoundedCornerLeft isActive={isActive} theme={theme} />
       {children}
-      <RoundedCornerRight isActive={isActive} />
+      <RoundedCornerRight isActive={isActive} theme={theme} />
     </Container>
   )
 }
@@ -25,15 +29,21 @@ type HasActiveFlag = {
   isActive: boolean
 }
 
-const Container = styled(Link)(({ isActive }: HasActiveFlag) => ({
+type HasAppTheme = {
+  theme: AppTheme
+}
+
+const Container = styled(Link)(({ isActive, theme }: HasActiveFlag & HasAppTheme) => ({
   color: '#000',
   position: 'relative',
   padding: '0.5rem 1.25rem',
   textDecoration: 'none',
   border: '1px solid',
-  borderColor: isActive ? '#eee #eee transparent' : 'transparent transparent #eee',
+  borderColor: isActive 
+    ? `${theme.baseBorderColor} ${theme.baseBorderColor} transparent` 
+    : `transparent transparent ${theme.baseBorderColor}`,
   transform: 'translateY(1px)',
-  backgroundColor: isActive ? '#fff' : '',
+  backgroundColor: isActive ? theme.baseBackgroundColor : '',
   borderRadius: '5px 5px 0 0',
   '::before': {
     content: '""',
@@ -43,7 +53,7 @@ const Container = styled(Link)(({ isActive }: HasActiveFlag) => ({
     bottom: '-1px',
     width: '5px',
     height: '5px',
-    backgroundColor: '#fff',
+    backgroundColor: theme.baseBackgroundColor,
   },
   '::after': {
     content: '""',
@@ -53,11 +63,11 @@ const Container = styled(Link)(({ isActive }: HasActiveFlag) => ({
     bottom: '-1px',
     width: '5px',
     height: '5px',
-    backgroundColor: '#fff',
+    backgroundColor: theme.baseBackgroundColor,
   },
 }))
 
-const RoundedCornerLeft = styled.div(({ isActive }: HasActiveFlag) => ({
+const RoundedCornerLeft = styled.div(({ isActive, theme }: HasActiveFlag & HasAppTheme) => ({
   position: 'absolute',
   display: isActive ? 'block' : 'none',
   left: '-6px',
@@ -65,12 +75,12 @@ const RoundedCornerLeft = styled.div(({ isActive }: HasActiveFlag) => ({
   width: '5px',
   height: '5px',
   borderRadius: '0 0 5px',
-  border: 'solid #eee',
+  border: `solid ${theme.baseBorderColor}`,
   borderWidth: '0 1px 1px 0',
   backgroundColor: '#ECECEC',
 }))
 
-const RoundedCornerRight = styled.div(({ isActive }: HasActiveFlag) => ({
+const RoundedCornerRight = styled.div(({ isActive, theme }: HasActiveFlag & HasAppTheme) => ({
   position: 'absolute',
   display: isActive ? 'block' : 'none',
   right: '-6px',
@@ -78,7 +88,7 @@ const RoundedCornerRight = styled.div(({ isActive }: HasActiveFlag) => ({
   width: '5px',
   height: '5px',
   borderRadius: '0 0 0 5px',
-  border: 'solid #eee',
+  border: `solid ${theme.baseBorderColor}`,
   borderWidth: '0 0 1px 1px',
   backgroundColor: '#ECECEC',
   zIndex: 9,
