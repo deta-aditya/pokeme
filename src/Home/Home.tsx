@@ -1,6 +1,5 @@
-import { NavBar } from "../NavBar"
+import { MainHeader } from '../MainHeader'
 import { PokemonsInfiniteList } from "../PokemonsInfiniteList";
-import { TotalPokemonsOwned } from "../TotalPokemonsOwned";
 
 function Home() {
   return (
@@ -9,15 +8,7 @@ function Home() {
       flexDirection: 'column',
       height: '100vh',
     }}>
-      <header style={{
-        paddingBottom: '16px',
-        borderBottom: '1px solid #eee',
-        flexGrow: 0,
-      }}>
-        <h1>Pokeme</h1>
-        <TotalPokemonsOwned />
-        <NavBar />
-      </header>
+      <MainHeader />
       <PokemonsInfiniteList />
     </div>
   )

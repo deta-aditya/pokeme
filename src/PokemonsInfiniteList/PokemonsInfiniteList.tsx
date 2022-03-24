@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"
 import { usePokemonsResource } from './use-pokemons-resource'
 import { useInfiniteScroll } from './use-infinite-scroll'
 import { createRestAPIPokemonsList } from '../resources/pokemons-rest-api'
+import styled from "@emotion/styled"
 
 function PokemonsInfiniteList() {
   const { pokemons, fetchNextResource } = usePokemonsResource({
@@ -19,21 +20,31 @@ function PokemonsInfiniteList() {
   }, [])
 
   return (
-    <div 
+    <Scroller 
       ref={scrollerRef}
       onScroll={onScroll}
-      style={{
-        overflow: 'auto',
-        flexGrow: 1,
-      }}
     >
       {pokemons.map(({ name }, idx) => (
-        <div key={idx}>
-          <Link to={`/pokemons/${name}`}>{name}</Link>
-        </div>
+        <PokemonListItem 
+          to={`/pokemons/${name}`}
+          key={idx}
+        >
+          {name}
+        </PokemonListItem>
       ))}
-    </div>
+    </Scroller>
   )
 }
+
+const Scroller = styled.div({
+  overflow: 'auto',
+  flexGrow: 1,
+})
+
+const PokemonListItem = styled(Link)({
+  padding: '0.825rem 1rem',
+  display: 'flex',
+  alignItems: 'center',
+})
 
 export { PokemonsInfiniteList }
