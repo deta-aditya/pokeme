@@ -33,6 +33,7 @@ function CatchResultModal({ pokemon }: CatchResultModalProps) {
         display: recentlyCaught.type === 'none' ? 'none' : 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        zIndex: 99,
       }}
       onClick={() => {
         dispatch({ type: 'cancel-caught' })

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom"
 import styled from "@emotion/styled"
 import PokemonLogoSvg from '../assets/pokemon_logo_gray.svg'
 import { usePokemonsResource } from './use-pokemons-resource'
-import { useInfiniteScroll } from './use-infinite-scroll'
+import { useScrollListener } from '../hooks/use-scroll-listener'
 import { createRestAPIPokemonsList } from '../resources/pokemons-rest-api'
 import { AppTheme, useAppTheme } from "../contexts/app-theme"
 
@@ -12,8 +12,9 @@ function PokemonsInfiniteList() {
     fetchPokemons: createRestAPIPokemonsList('https://pokeapi.co/api/v2/pokemon/', 20),
   })
 
-  const { scrollerRef, onScroll } = useInfiniteScroll<HTMLDivElement>({
+  const { scrollerRef, onScroll } = useScrollListener<HTMLDivElement>({
     pxThreshold: 20,
+    fromBottom: true,
     onThresholdPassed: fetchNextResource,
   })
 
@@ -76,6 +77,7 @@ const PokemonListItem = styled(Link)(({ theme }: { theme: AppTheme }) => ({
   backgroundRepeat: 'no-repeat',
   backgroundPosition: '45px 45px',
   boxShadow: '0px 2px 3px 0px #e0e0e0',
+  textTransform: 'capitalize',
   img: {
     width: '75px',
   }
