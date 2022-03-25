@@ -12,6 +12,7 @@ const appTheme: Theme = {
   blackColor: '#000000',
   whiteColor: '#FFFFFF',
   baseBorderColor: '#DFDFDF',
+  modalBackdropColor: 'rgba(0,0,0,0.7)',
 }
 
 function AppThemeProvider({ children }: { children: React.ReactNode }) {

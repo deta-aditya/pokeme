@@ -7,6 +7,7 @@ type AppTheme = {
   blackColor: string
   whiteColor: string
   baseBorderColor: string
+  modalBackdropColor: string
 }
 
 declare module '@emotion/react' {

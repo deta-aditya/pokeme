@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { PokemonDetailsData } from "../resources/types"
 import { useOwnedPokemons } from "../contexts/owned-pokemons"
+import styled from "@emotion/styled"
 
 type CatchResultModalProps = {
   pokemon: PokemonDetailsData
@@ -24,89 +25,140 @@ function CatchResultModal({ pokemon }: CatchResultModalProps) {
     _()
 
   return (
-    <div 
-      style={{
-        position: 'absolute',
-        width: '100vw',
-        height: '100vh',
-        backgroundColor: 'rgba(0,0,0,0.7)',
-        display: recentlyCaught.type === 'none' ? 'none' : 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 99,
-      }}
+    <ModalBackdrop
+      hasCaughtInfo={recentlyCaught.type !== 'none'}
       onClick={() => {
         dispatch({ type: 'cancel-caught' })
       }}
     >
-      <div 
-        style={{
-          backgroundColor: 'white',
-          textAlign: 'center',
-          padding: '1rem',
-        }}
+      <ModalDialog
         onClick={(evt) => {
           evt.stopPropagation()
         }}
       >
-        <div style={{ fontWeight: 'bold' }}>
-          {matchWhen({
-            caught: () => `You caught ${pokemon.name}!`,
-            failed: () => `Failed to catch ${pokemon.name}`,
-            _: () => ''
-          })}
-        </div>
+        
         {/* Change it to bright variant if catch is success! */}
         <img src={pokemon.picture} alt={`${pokemon.name}'s picture`} />
-        <div>
+        <ModalTitle>
+          {matchWhen({
+            caught: () => <>You caught <Capitalize>{pokemon.name}</Capitalize>!</>,
+            failed: () => <>Failed catching <Capitalize>{pokemon.name}</Capitalize></>,
+            _: () => <></>
+          })}
+        </ModalTitle>
+        <AdditionalDesc>
           {matchWhen({
             caught: () => 'Let\'s give it a nickname',
             failed: () => 'Better luck next time!',
             _: () => ''
           })} 
-        </div>
+        </AdditionalDesc>
         {matchWhen({
           caught: () => (
-            <form onSubmit={(evt) => {
+            <NicknameForm onSubmit={(evt) => {
               evt.preventDefault()
               if (nickname !== '') {
                 dispatch({ type: 'save-caught', nickname })
                 setNickname('')
               }
             }}>
-              <input 
+              <NicknameInput 
                 type="text" 
                 name="nickname" 
                 id="nickname" 
                 value={nickname}
+                autoComplete="off"
                 onChange={(evt) => setNickname(evt.target.value)} 
               />
-              <div style={{
-                color: 'red'
-              }}>
-                {isNicknameOwned ? `${nickname} is already used! Please give a different name` : ''}
-              </div>
-              <div>
-                <button type="submit">Keep</button>
-              </div>
-            </form>
+              <NicknameValidation show={isNicknameOwned}>
+                "{nickname}" is already used!
+              </NicknameValidation>
+              <SubmitButton type="submit">Keep</SubmitButton>
+            </NicknameForm>
           ),
           failed: () => (
-            <div>
-              <button 
-                onClick={() => {
-                  dispatch({ type: 'cancel-caught' })
-                }}
-              >
-                Close
-              </button>
-            </div>
+            <SubmitButton 
+              onClick={() => {
+                dispatch({ type: 'cancel-caught' })
+              }}
+            >
+              Close
+            </SubmitButton>
           ),
           _: () => <></>
         })}
-      </div>
-    </div>
+      </ModalDialog>
+    </ModalBackdrop>
   )
 }
+
+const ModalBackdrop = styled.div<{ hasCaughtInfo: boolean }>(({ hasCaughtInfo, theme }) => ({
+  position: 'absolute',
+  width: '100vw',
+  height: '100vh',
+  backgroundColor: theme.modalBackdropColor,
+  display: hasCaughtInfo ? 'flex' : 'none',
+  justifyContent: 'center',
+  alignItems: 'start',
+  zIndex: 99,
+}))
+
+const ModalDialog = styled.div(({ theme }) => ({
+  backgroundColor: theme.whiteColor,
+  width: '360px',
+  borderRadius: '10px',
+  margin: '3rem 2rem',
+  textAlign: 'center',
+}))
+
+const ModalTitle = styled.div({
+  fontWeight: 'bold',
+  fontSize: '1.25rem',
+})
+
+const Capitalize = styled.span({
+  textTransform: 'capitalize',
+})
+
+const AdditionalDesc = styled.div({
+  marginTop: '0.875rem',
+})
+
+const NicknameForm = styled.form({
+  display: 'flex',
+  flexDirection: 'column',
+})
+
+const NicknameInput = styled.input(({ theme }) => ({
+  margin: '1.75rem 2.5rem 0',
+  padding: '0.625rem 0.875rem',
+  border: `1px solid ${theme.baseBorderColor}`,
+  borderRadius: '5px',
+}))
+
+const NicknameValidation = styled.div<{ show: boolean }>(({ show }) => ({
+  display: show ? 'block' : 'none',
+  color: '#999',
+  fontSize: '0.875rem',
+  marginTop: '0.875rem',
+}))
+
+const SubmitButton = styled.button(({ theme }) => ({
+  marginTop: '2.5rem',
+  width: '100%',
+  padding: '1.25rem',
+  fontSize: '1rem',
+  fontWeight: 'bold',
+  color: theme.accentColor,
+  borderTop: `1px solid ${theme.baseBorderColor}`,
+  borderRight: 'none',
+  borderBottom: 'none',
+  borderLeft: 'none',
+  borderRadius: '0 0 10px 10px',
+  backgroundColor: 'transparent',
+  '&:hover': {
+    boxShadow: 'inset 0 0 10px 5px #eee',
+  },
+}))
 
 export { CatchResultModal }
