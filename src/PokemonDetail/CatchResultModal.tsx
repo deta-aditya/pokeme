@@ -38,7 +38,7 @@ function CatchResultModal({ pokemon }: CatchResultModalProps) {
       >
         
         {/* Change it to bright variant if catch is success! */}
-        <img src={pokemon.picture} alt={`${pokemon.name}'s picture`} />
+        <PokemonPicture src={pokemon.picture} alt={`${pokemon.name}'s picture`} />
         <ModalTitle>
           {matchWhen({
             caught: () => <>You caught <Capitalize>{pokemon.name}</Capitalize>!</>,
@@ -110,6 +110,10 @@ const ModalDialog = styled.div(({ theme }) => ({
   margin: '3rem 2rem',
   textAlign: 'center',
 }))
+
+const PokemonPicture = styled.img({
+  marginTop: '2rem',
+})
 
 const ModalTitle = styled.div({
   fontWeight: 'bold',
