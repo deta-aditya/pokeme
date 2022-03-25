@@ -4,13 +4,15 @@ import { PokemonDetailsData } from "../resources/types"
 
 type CatchButtonProps = {
   pokemon: PokemonDetailsData
+  className?: string
 }
 
-function CatchButton({ pokemon }: CatchButtonProps) {
+function CatchButton({ pokemon, className }: CatchButtonProps) {
   const { dispatch } = useOwnedPokemons()
 
   return (
     <Button
+      className={className}
       onClick={() => {
         // let's find a way to purify this thing
         const isCaught = Math.random() < 0.5
@@ -28,6 +30,11 @@ const Button = styled.div(({ theme }) => ({
   fontWeight: 'bold',
   color: theme.whiteColor,
   borderRadius: '40px',
+  cursor: 'pointer',
+  transition: '0.15s',
+  '&:hover': {
+    backgroundColor: theme.accentColorDark,
+  }
 }))
 
 export { CatchButton }

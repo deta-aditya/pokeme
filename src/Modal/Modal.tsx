@@ -87,6 +87,8 @@ const StyledModalButton = styled.button(({ theme }) => ({
   borderBottom: 'none',
   borderLeft: 'none',
   background: 'transparent',
+  transition: '0.15s',
+  cursor: 'pointer',
   '&:hover': {
     boxShadow: 'inset 0 0 10px 5px #eee',
   },

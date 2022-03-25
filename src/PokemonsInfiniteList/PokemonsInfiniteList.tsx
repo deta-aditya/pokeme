@@ -1,27 +1,40 @@
-import { useEffect } from "react"
-import { Link } from "react-router-dom"
+import { CSSProperties, useEffect, useLayoutEffect } from "react"
 import styled from "@emotion/styled"
-import PokemonLogoSvg from '../assets/pokemon_logo_gray.svg'
 import { usePokemonsResource } from './use-pokemons-resource'
 import { useScrollListener } from '../hooks/use-scroll-listener'
 import { createRestAPIPokemonsList } from '../resources/pokemons-rest-api'
 import { PokemonCardItem } from '../PokemonCardItem'
 import { capitalize } from '../utils/capitalizer'
+import { onMediaQuery } from "../contexts/app-theme"
+import { Theme } from "@emotion/react"
 
 function PokemonsInfiniteList() {
+  const itemsPerBatch = 20
+
   const { pokemons, fetchNextResource } = usePokemonsResource({
-    fetchPokemons: createRestAPIPokemonsList('https://pokeapi.co/api/v2/pokemon/', 20),
+    fetchPokemons: createRestAPIPokemonsList('https://pokeapi.co/api/v2/pokemon/', itemsPerBatch),
   })
 
   const { scrollerRef, onScroll } = useScrollListener<HTMLDivElement>({
     pxThreshold: 20,
     fromBottom: true,
-    onThresholdPassed: fetchNextResource,
+    onThresholdPassed: () => {
+      fetchNextResource()
+    },
   })
 
   useEffect(() => {
     fetchNextResource()
   }, [])
+
+  useLayoutEffect(() => {
+    if (scrollerRef.current !== null && pokemons.length > 0) {
+      const { scrollHeight, clientHeight } = scrollerRef.current
+      if (scrollHeight == clientHeight) {
+        fetchNextResource()
+      }
+    }
+  }, [scrollerRef, pokemons.length])
 
   return (
     <Scroller 
@@ -42,16 +55,29 @@ function PokemonsInfiniteList() {
   )
 }
 
-const Scroller = styled.div({
+const Scroller = styled.div(({ theme }) => ({
   overflow: 'auto',
   flexGrow: 1,
   paddingTop: '1.875rem',
   '& > div': {
     margin: 'auto',
     display: 'flex',
+    justifyContent: 'center',
     flexWrap: 'wrap',
-    width: '300px', // adjust with breakpoint later
+    width: '300px',
+    [onMediaQuery(theme.sm)]: {
+      width: '500px',
+    },
+    [onMediaQuery(theme.md)]: {
+      width: '700px',
+    },
+    [onMediaQuery(theme.lg)]: {
+      width: '900px',
+    },
+    [onMediaQuery(theme.xl)]: {
+      width: '1100px',
+    },
   },
-})
+}))
 
 export { PokemonsInfiniteList }

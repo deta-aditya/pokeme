@@ -7,7 +7,8 @@ import { createRestAPIPokemonDetails } from "../resources/pokemons-rest-api"
 import styled from "@emotion/styled"
 import PokemonLogoSvg from '../assets/pokemon_logo_gray.svg'
 import { useScrollListener } from "../hooks/use-scroll-listener"
-import { TabLink } from "../TabLink"
+import { onMediaQuery } from "../contexts/app-theme"
+import { DetailsTabs } from "./DetailsTabs"
 import { useTheme } from "@emotion/react"
 
 function PokemonDetail() {
@@ -56,24 +57,20 @@ function PokemonDetail() {
               <div key={idx}>{type}</div>
             ))}
           </PokemonTypes>
-          <TabsContainer>
-            <TabLink
-              isActive 
-              insideBackgroundColor={theme.baseBackgroundColor}
-              outsideBackgroundColor={theme.whiteColor}
-            >
-              Moves
-            </TabLink>
-          </TabsContainer>
+          {details !== null && <CatchButtonDesktop pokemon={details} />}
+          <DetailsTabsMobile outsideBackgroundColor={theme.whiteColor} />
         </TopSection>
-        <MovesSection>
-          {details?.moves.map((move, idx) => (
-            <div key={idx}>{move.replace('-', ' ')}</div>
-          ))}
-        </MovesSection>
+        <TabsSection>
+          <DetailsTabsDesktop outsideBackgroundColor={'#ECECEC'}  />
+          <MovesSection>
+            {details?.moves.map((move, idx) => (
+              <div key={idx}>{move.replace('-', ' ')}</div>
+            ))}
+          </MovesSection>
+        </TabsSection>
       </ContentSection>
       <ButtonContainer>
-        {details !== null ? <CatchButton pokemon={details} /> : <></>}
+        {details !== null && <CatchButton pokemon={details} />}
       </ButtonContainer>
     </PageContainer>
   )
@@ -115,10 +112,16 @@ const BackLink = styled(Link)(({ theme }) => ({
   paddingLeft: '1rem',
 }))
 
-const ContentSection = styled.div({
+const ContentSection = styled.div(({ theme }) => ({
   overflow: 'auto',
   flexGrow: 0,
-})
+  display: 'flex',
+  flexDirection: 'column',
+  [onMediaQuery(theme.lg)]: {
+    overflow: 'hidden',
+    flexDirection: 'row',
+  },
+}))
 
 const TopSection = styled.div(({ theme }) => ({
   paddingTop: '4rem',
@@ -138,7 +141,19 @@ const TopSection = styled.div(({ theme }) => ({
   img: {
     width: '100px',
   },
+  [onMediaQuery(theme.lg)]: {
+    width: '400px',
+    borderBottom: 'none',
+    borderRight: `1px solid ${theme.baseBorderColor}`,
+    backgroundPosition: 'right -50px top -50px',
+  },
 }))
+
+const TabsSection = styled.div({
+  display: 'flex',
+  flexDirection: 'column',
+  flexGrow: 1,
+})
 
 const PokemonTypes = styled.div(({ theme }) => ({
   display: 'flex',
@@ -155,9 +170,29 @@ const PokemonTypes = styled.div(({ theme }) => ({
   }
 }))
 
-const TabsContainer = styled.div(({ theme }) => ({
-  display: 'flex',
-  margin: '2rem 0 0 1rem'
+const CatchButtonDesktop = styled(CatchButton)(({ theme }) => ({
+  display: 'none',
+  [onMediaQuery(theme.lg)]: {
+    display: 'inline-block',
+    marginTop: '4rem',
+  },
+}))
+
+const DetailsTabsMobile = styled(DetailsTabs)(({ theme }) => ({
+  [onMediaQuery(theme.lg)]: {
+    display: 'none',
+  },
+}))
+
+const DetailsTabsDesktop = styled(DetailsTabs)(({ theme }) => ({
+  display: 'none',
+  [onMediaQuery(theme.lg)]: {
+    display: 'flex',
+    margin: 0,
+    padding: '1rem 0 0 1rem',
+    borderBottom: `1px solid ${theme.baseBorderColor}`,
+    backgroundImage: theme.headerGradientColors,
+  },
 }))
 
 const MovesSection = styled.div(({ theme }) => ({
@@ -171,14 +206,22 @@ const MovesSection = styled.div(({ theme }) => ({
       borderBottom: `1px solid ${theme.baseBorderColor}`,
     }
   },
+  [onMediaQuery(theme.lg)]: {
+    overflowY: 'auto',
+    margin: 0,
+    padding: '1rem 0 1rem',
+  }
 }))
 
-const ButtonContainer = styled.footer({
+const ButtonContainer = styled.footer(({ theme }) => ({
   position: 'absolute',
   width: '100%',
   display: 'flex',
   justifyContent: 'center',
   bottom: '1.25rem',
-})
+  [onMediaQuery(theme.lg)]: {
+    display: 'none',
+  }
+}))
 
 export { PokemonDetail }

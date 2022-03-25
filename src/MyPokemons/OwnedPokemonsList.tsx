@@ -1,5 +1,6 @@
 import styled from "@emotion/styled"
 import { useState } from "react"
+import { onMediaQuery } from "../contexts/app-theme"
 import { useOwnedPokemons } from "../contexts/owned-pokemons"
 import { Modal, ModalButton, ModalFooter, ModalTitle } from "../Modal"
 import { PokemonCardItem } from "../PokemonCardItem"
@@ -108,16 +109,29 @@ const ModalContent = styled.div({
   padding: '0 1rem',
 })
 
-const Scroller = styled.div({
+const Scroller = styled.div(({ theme }) => ({
   overflow: 'auto',
   flexGrow: 1,
   padding: '1.875rem 0 1.875rem',
   '& > div': {
     margin: 'auto',
     display: 'flex',
+    justifyContent: 'center',
     flexWrap: 'wrap',
-    width: '300px', // adjust with breakpoint later
+    width: '300px',
+    [onMediaQuery(theme.sm)]: {
+      width: '500px',
+    },
+    [onMediaQuery(theme.md)]: {
+      width: '700px',
+    },
+    [onMediaQuery(theme.lg)]: {
+      width: '900px',
+    },
+    [onMediaQuery(theme.xl)]: {
+      width: '1100px',
+    },
   },
-})
+}))
 
 export { OwnedPokemonsList }
