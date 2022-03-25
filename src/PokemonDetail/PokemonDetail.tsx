@@ -1,23 +1,21 @@
 import { useEffect, useState } from "react"
-import { Link, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import { CatchResultModal } from './CatchResultModal'
 import { CatchButton } from './CatchButton'
-import { PokemonDetailsData } from '../resources/types'
-import { createRestAPIPokemonDetails } from "../resources/pokemons-rest-api"
 import styled from "@emotion/styled"
 import PokemonLogoSvg from '../assets/pokemon_logo_gray.svg'
 import { useScrollListener } from "../hooks/use-scroll-listener"
 import { onMediaQuery } from "../contexts/app-theme"
 import { DetailsTabs } from "./DetailsTabs"
 import { useTheme } from "@emotion/react"
+import { usePokemonDetailsResource } from "../contexts/pokemon-details-resource"
 
 function PokemonDetail() {
   const { name } = useParams<'name'>()
-  const [details, setDetails] = useState<PokemonDetailsData | null>(null)
-  const getPokemonDetails = createRestAPIPokemonDetails('https://pokeapi.co/api/v2/pokemon/')
+  const { state: { pokemon }, fetchDetails } = usePokemonDetailsResource()
   useEffect(() => {
     if (name !== undefined) {
-      getPokemonDetails(name).then(setDetails)
+      fetchDetails(name)
     }
   }, [])
 
@@ -37,40 +35,44 @@ function PokemonDetail() {
   })
 
   const theme = useTheme()
+  const navigate = useNavigate()
 
   return (
     <PageContainer>
-      {details !== null ? <CatchResultModal pokemon={details} /> : <></>}
+      {pokemon !== undefined ? <CatchResultModal pokemon={pokemon} /> : <></>}
       <HeaderSection isScrollPassed={isScrollPassed}>
         <div>
-          <BackLink to="/">&lt; Back</BackLink>
+          <BackLink href="/" onClick={(evt) => {
+            evt.preventDefault()
+            navigate(-1)
+          }}>&lt; Back</BackLink>
         </div>
         <h1>{name}</h1>
         <div>&nbsp;</div>
       </HeaderSection>
       <ContentSection ref={scrollerRef} onScroll={onScroll} >
         <TopSection>
-          <img src={details?.picture} alt={`${name}'s picture`} />
-          <h1>{details?.name}</h1>
+          <img src={pokemon?.picture} alt={`${name}'s picture`} />
+          <h1>{pokemon?.name}</h1>
           <PokemonTypes>
-            {details?.types.map((type, idx) => (
+            {pokemon?.types.map((type, idx) => (
               <div key={idx}>{type}</div>
             ))}
           </PokemonTypes>
-          {details !== null && <CatchButtonDesktop pokemon={details} />}
+          {pokemon !== undefined && <CatchButtonDesktop pokemon={pokemon} />}
           <DetailsTabsMobile outsideBackgroundColor={theme.whiteColor} />
         </TopSection>
         <TabsSection>
           <DetailsTabsDesktop outsideBackgroundColor={'#ECECEC'}  />
           <MovesSection>
-            {details?.moves.map((move, idx) => (
+            {pokemon?.moves.map((move, idx) => (
               <div key={idx}>{move.replace('-', ' ')}</div>
             ))}
           </MovesSection>
         </TabsSection>
       </ContentSection>
       <ButtonContainer>
-        {details !== null && <CatchButton pokemon={details} />}
+        {pokemon !== undefined && <CatchButton pokemon={pokemon} />}
       </ButtonContainer>
     </PageContainer>
   )
@@ -105,7 +107,7 @@ const HeaderSection = styled.header<{ isScrollPassed: boolean }>(({ theme, isScr
   }
 }))
 
-const BackLink = styled(Link)(({ theme }) => ({
+const BackLink = styled.a(({ theme }) => ({
   fontWeight: 'bold',
   textDecoration: 'none',
   color: theme.accentColor,
@@ -114,7 +116,7 @@ const BackLink = styled(Link)(({ theme }) => ({
 
 const ContentSection = styled.div(({ theme }) => ({
   overflow: 'auto',
-  flexGrow: 0,
+  flexGrow: 1,
   display: 'flex',
   flexDirection: 'column',
   [onMediaQuery(theme.lg)]: {

@@ -3,6 +3,7 @@ import { PokemonDetailsData } from "../resources/types"
 import { useOwnedPokemons } from "../contexts/owned-pokemons"
 import styled from "@emotion/styled"
 import { Modal, ModalTitle, ModalButton, ModalFooter } from '../Modal'
+import { useNavigate } from "react-router-dom"
 
 type CatchResultModalProps = {
   pokemon: PokemonDetailsData
@@ -13,8 +14,9 @@ function CatchResultModal({ pokemon }: CatchResultModalProps) {
   const { recentlyCaught, pokemons } = state
 
   const [nickname, setNickname] = useState('')
-
   const isNicknameOwned = pokemons.map(pokemon => pokemon.nickname).includes(nickname)
+
+  const navigate = useNavigate()
 
   const matchWhen: <T>(matcher: { 
     caught: () => T, 
@@ -53,6 +55,7 @@ function CatchResultModal({ pokemon }: CatchResultModalProps) {
             if (nickname !== '') {
               dispatch({ type: 'save-caught', nickname })
               setNickname('')
+              navigate('/my-pokemons')
             }
           }}>
             <NicknameInput 

@@ -3,42 +3,41 @@ import { PokemonDetail } from './PokemonDetail'
 import { MyPokemons } from './MyPokemons'
 import { Home } from './Home'
 import { AppThemeProvider } from './contexts/app-theme'
-import { OwnedPokemon, OwnedPokemonsProvider } from './contexts/owned-pokemons'
-import { StoredOwnedPokemon, useLocalStorageOwnedPokemons } from "./storage/local-storage";
+import { OwnedPokemonsProvider } from './contexts/owned-pokemons'
+import { createLocalStorageOwnedPokemons } from "./storage/local-storage";
+import { PokemonIndexResourceProvider } from "./contexts/pokemon-index-resource";
+import { PokemonDetailsResourceProvider } from "./contexts/pokemon-details-resource";
+import { newGraphQLPokemonsResource } from './resources/pokemons-graphql'
 
 function App() {
-  const { loadFromStorage, saveToStorage } = useLocalStorageOwnedPokemons({ initialValue: [] })
+  const { loadFromStorage, saveToStorage } = createLocalStorageOwnedPokemons([])
 
-  const loadPokemons = () => {
-    return new Promise<OwnedPokemon[]>((resolve) => {
-      const storedPokemons = loadFromStorage()
-      const ownedPokemons = storedPokemons.map(pokemon => pokemon as OwnedPokemon)
-      resolve(ownedPokemons)
-    })
-  }
-
-  const savePokemons = (pokemons: OwnedPokemon[]) => {
-    return new Promise<void>((resolve) => {
-      const toBeStoredPokemons = pokemons.map(pokemon => pokemon as StoredOwnedPokemon)
-      saveToStorage(toBeStoredPokemons)
-      resolve()
-    })
-  }
+  const pokemonGraphqlUri = 'https://graphql-pokeapi.graphcdn.app/'
+  const { getPokemonsList, getPokemonDetails } = newGraphQLPokemonsResource(pokemonGraphqlUri)
 
   return (
     <AppThemeProvider>
-      <OwnedPokemonsProvider 
-        loadPokemons={loadPokemons}
-        savePokemons={savePokemons}
+      <PokemonIndexResourceProvider 
+        limit={20}
+        getPokemonsList={getPokemonsList}
       >
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Home/>} />
-            <Route path="/my-pokemons" element={<MyPokemons/>} />
-            <Route path="/pokemons/:name" element={<PokemonDetail />} />
-          </Routes>
-        </BrowserRouter>
-      </OwnedPokemonsProvider>
+        <PokemonDetailsResourceProvider
+          getPokemonDetails={getPokemonDetails}
+        >
+          <OwnedPokemonsProvider 
+            loadPokemons={loadFromStorage}
+            savePokemons={saveToStorage}
+          >
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Home/>} />
+                <Route path="/my-pokemons" element={<MyPokemons/>} />
+                <Route path="/pokemons/:name" element={<PokemonDetail />} />
+              </Routes>
+            </BrowserRouter>
+          </OwnedPokemonsProvider>
+        </PokemonDetailsResourceProvider>
+      </PokemonIndexResourceProvider>
     </AppThemeProvider>
   )
 }

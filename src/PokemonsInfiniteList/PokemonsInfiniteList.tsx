@@ -1,19 +1,13 @@
-import { CSSProperties, useEffect, useLayoutEffect } from "react"
+import { useEffect, useLayoutEffect } from "react"
 import styled from "@emotion/styled"
-import { usePokemonsResource } from './use-pokemons-resource'
 import { useScrollListener } from '../hooks/use-scroll-listener'
-import { createRestAPIPokemonsList } from '../resources/pokemons-rest-api'
 import { PokemonCardItem } from '../PokemonCardItem'
 import { capitalize } from '../utils/capitalizer'
 import { onMediaQuery } from "../contexts/app-theme"
-import { Theme } from "@emotion/react"
+import { usePokemonIndexResource } from "../contexts/pokemon-index-resource"
 
 function PokemonsInfiniteList() {
-  const itemsPerBatch = 20
-
-  const { pokemons, fetchNextResource } = usePokemonsResource({
-    fetchPokemons: createRestAPIPokemonsList('https://pokeapi.co/api/v2/pokemon/', itemsPerBatch),
-  })
+  const { state: { pokemons }, fetchNextResource } = usePokemonIndexResource()
 
   const { scrollerRef, onScroll } = useScrollListener<HTMLDivElement>({
     pxThreshold: 20,
@@ -24,8 +18,10 @@ function PokemonsInfiniteList() {
   })
 
   useEffect(() => {
-    fetchNextResource()
-  }, [])
+    if (pokemons.length === 0) {
+      fetchNextResource()
+    }
+  }, [pokemons.length])
 
   useLayoutEffect(() => {
     if (scrollerRef.current !== null && pokemons.length > 0) {
@@ -42,11 +38,11 @@ function PokemonsInfiniteList() {
       onScroll={onScroll}
     >
       <div>
-        {pokemons.map(({ name }, idx) => (
+        {pokemons.map(({ name, image }, idx) => (
           <PokemonCardItem
             key={idx}
             to={`/pokemons/${name}`}
-            pictureSrc="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/35.png"
+            pictureSrc={image}
             primaryName={capitalize(name)}
           />
         ))}

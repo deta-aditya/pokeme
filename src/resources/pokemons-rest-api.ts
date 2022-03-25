@@ -1,14 +1,11 @@
 import axios from "axios"
-import { PokemonDetailsData, PokemonsResource } from "./types"
+import { PokemonDetailsData, PokemonListItem } from "./types"
 
-const createRestAPIPokemonsList = (url: string, limit: number) => (prevResource: PokemonsResource) => {
-  const completeUrl = prevResource.next ?? `${url}?limit=${limit}`
+const createRestAPIPokemonsList = (url: string) => (limit: number, offset: number) => {
+  const completeUrl =`${url}?limit=${limit}&offset=${offset}`
 
   return axios.get(completeUrl)
-    .then(response => ({
-      next: response.data.next,
-      pokemons: response.data.results
-    }) as unknown as PokemonsResource)
+    .then(response => response.data.results as unknown as PokemonListItem[])
 }
 
 const createRestAPIPokemonDetails = (url: string) => (name: string) => {

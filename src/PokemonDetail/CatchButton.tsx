@@ -1,4 +1,5 @@
 import styled from "@emotion/styled"
+import { useNavigate } from "react-router-dom"
 import { useOwnedPokemons } from "../contexts/owned-pokemons"
 import { PokemonDetailsData } from "../resources/types"
 

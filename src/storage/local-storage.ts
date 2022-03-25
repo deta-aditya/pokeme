@@ -1,48 +1,43 @@
-type StoredOwnedPokemon = {
-  name: string,
-  nickname: string,
-  picture: string,
-}
+import { OwnedPokemon } from "../contexts/owned-pokemons"
 
-type UseLocalStorageOwnedPokemonsParams = {
-  initialValue: StoredOwnedPokemon[]
-}
-
-type UseLocalStorageOwnedPokemonsReturns = {
-  loadFromStorage: () => StoredOwnedPokemon[]
-  saveToStorage: (pokemons: StoredOwnedPokemon[]) => void
+type LocalStorageOwnedPokemons = {
+  loadFromStorage: () => Promise<OwnedPokemon[]>
+  saveToStorage: (pokemons: OwnedPokemon[]) => Promise<void>
 }
 
 const localStorageKey = 'owned-pokemons'
 
-function useLocalStorageOwnedPokemons({ initialValue }: UseLocalStorageOwnedPokemonsParams)
-  : UseLocalStorageOwnedPokemonsReturns {
-  
+function createLocalStorageOwnedPokemons(initialValue: OwnedPokemon[]): LocalStorageOwnedPokemons {
   const loadFromStorage = () => {
-    if (typeof window === 'undefined') {
-      return initialValue
-    }
-
-    try {
-      const value = window.localStorage.getItem(localStorageKey)
-      return value ? JSON.parse(value): initialValue
-    } catch (error) {
-      console.error(error)
-      return initialValue
-    }
+    return new Promise<OwnedPokemon[]>((resolve, reject) => {
+      if (typeof window === 'undefined') {
+        resolve(initialValue)
+      }
+  
+      try {
+        const value = window.localStorage.getItem(localStorageKey)
+        resolve(value ? JSON.parse(value): initialValue)
+      } catch (error) {
+        console.error(error)
+        reject(initialValue)
+      }
+    })
   }
 
-  const saveToStorage = (pokemons: StoredOwnedPokemon[]) => {
-    if (typeof window === 'undefined') {
-      return
-    }
+  const saveToStorage = (pokemons: OwnedPokemon[]) => {
+    return new Promise<void>((resolve, reject) => {
+      if (typeof window === 'undefined') {
+        resolve()
+      }
 
-    try {
-      const jsonValue = JSON.stringify(pokemons)
-      window.localStorage.setItem(localStorageKey, jsonValue)
-    } catch (error) {
-      console.error(error)
-    }
+      try {
+        const jsonValue = JSON.stringify(pokemons)
+        window.localStorage.setItem(localStorageKey, jsonValue)
+        resolve()
+      } catch (error) {
+        reject(error)
+      }
+    })
   }
 
   return {
@@ -51,5 +46,4 @@ function useLocalStorageOwnedPokemons({ initialValue }: UseLocalStorageOwnedPoke
   }
 }
 
-export { useLocalStorageOwnedPokemons }
-export type { StoredOwnedPokemon }
+export { createLocalStorageOwnedPokemons }
