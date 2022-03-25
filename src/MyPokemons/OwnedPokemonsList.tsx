@@ -1,5 +1,7 @@
+import styled from "@emotion/styled"
 import { useState } from "react"
 import { useOwnedPokemons } from "../contexts/owned-pokemons"
+import { Modal, ModalButton, ModalFooter, ModalTitle } from "../Modal"
 
 type ModalState =
   | { type: 'closed' }
@@ -13,55 +15,31 @@ function OwnedPokemonsList() {
 
   return (
     <>
-      <div
-        style={{
-          position: 'absolute',
-          width: '100vw',
-          height: '100vh',
-          backgroundColor: 'rgba(0,0,0,0.7)',
-          display: isOpenModal.type === 'opened' ? 'flex' : 'none',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-        onClick={() => {
-          setIsOpenModal({ type: 'closed' })
-        }}
+      <Modal
+        show={isOpenModal.type === 'opened'}
+        onClosed={() => setIsOpenModal({ type: 'closed' })}
       >
-        <div
-          style={{
-            backgroundColor: 'white',
-            textAlign: 'center',
-            padding: '1rem',
-          }}
-          onClick={(evt) => {
-            evt.stopPropagation()
-          }}
-        >
-          <div>
-            Are you sure you want to release 
-            <b> {isOpenModal.type === 'opened' && isOpenModal.nickname}</b>?
-          </div>
-          <div>
-            <button
-              onClick={() => {
-                if (isOpenModal.type === 'opened') {
-                  dispatch({ type: 'release', nickname: isOpenModal.nickname })
-                }
-                setIsOpenModal({ type: 'closed' })
-              }}
-            >
-              Yes
-            </button>
-            <button
-              onClick={() => {
-                setIsOpenModal({ type: 'closed' })
-              }}
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      </div>
+        <ModalContent>
+          <ModalTitle>
+            Are you sure you want to release {isOpenModal.type === 'opened' && isOpenModal.nickname}?
+          </ModalTitle>
+        </ModalContent>
+        <ModalFooter>
+          <ModalButton isCloseButton>
+            Cancel
+          </ModalButton>
+          <ModalButton
+            onClick={() => {
+              if (isOpenModal.type === 'opened') {
+                dispatch({ type: 'release', nickname: isOpenModal.nickname })
+              }
+              setIsOpenModal({ type: 'closed' })
+            }}
+          >
+            Release
+          </ModalButton>
+        </ModalFooter>
+      </Modal>
       <div
         style={{
           overflow: 'auto',
@@ -115,5 +93,10 @@ function OwnedPokemonsList() {
     </>
   )
 }
+
+const ModalContent = styled.div({
+  marginTop: '2rem',
+  padding: '0 1rem',
+})
 
 export { OwnedPokemonsList }
