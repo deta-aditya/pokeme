@@ -5,6 +5,8 @@ import PokemonLogoSvg from '../assets/pokemon_logo_gray.svg'
 import { usePokemonsResource } from './use-pokemons-resource'
 import { useScrollListener } from '../hooks/use-scroll-listener'
 import { createRestAPIPokemonsList } from '../resources/pokemons-rest-api'
+import { PokemonCardItem } from '../PokemonCardItem'
+import { capitalize } from '../utils/capitalizer'
 
 function PokemonsInfiniteList() {
   const { pokemons, fetchNextResource } = usePokemonsResource({
@@ -28,13 +30,12 @@ function PokemonsInfiniteList() {
     >
       <div>
         {pokemons.map(({ name }, idx) => (
-          <PokemonListItem 
-            to={`/pokemons/${name}`}
+          <PokemonCardItem
             key={idx}
-          >
-            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/35.png" alt={`${name}'s picture`} />
-            <span>{name}</span>
-          </PokemonListItem>
+            to={`/pokemons/${name}`}
+            pictureSrc="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/35.png"
+            primaryName={capitalize(name)}
+          />
         ))}
       </div>
     </Scroller>
@@ -52,31 +53,5 @@ const Scroller = styled.div({
     width: '300px', // adjust with breakpoint later
   },
 })
-
-const PokemonListItem = styled(Link)(({ theme }) => ({
-  width: '135px',
-  height: '135px',
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  border: `1px solid ${theme.baseBorderColor}`,
-  borderRadius: '10px',
-  margin: '0 0.75rem 0.75rem 0',
-  textDecoration: 'none',
-  color: theme.blackColor,
-  fontWeight: 'bold',
-  gap: '4px',
-  backgroundColor: theme.whiteColor,
-  backgroundImage: `url(${PokemonLogoSvg})`,
-  backgroundSize: '125px',
-  backgroundRepeat: 'no-repeat',
-  backgroundPosition: '45px 45px',
-  boxShadow: '0px 2px 3px 0px #e0e0e0',
-  textTransform: 'capitalize',
-  img: {
-    width: '75px',
-  }
-}))
 
 export { PokemonsInfiniteList }

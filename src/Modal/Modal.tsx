@@ -90,7 +90,7 @@ const StyledModalButton = styled.button(({ theme }) => ({
   '&:hover': {
     boxShadow: 'inset 0 0 10px 5px #eee',
   },
-  '&:first-child': {
+  '&:first-of-type': {
     borderBottomLeftRadius: '10px',
   },
   '&:last-child': {
