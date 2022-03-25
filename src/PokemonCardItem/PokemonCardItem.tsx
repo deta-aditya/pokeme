@@ -11,7 +11,20 @@ type PokemonCardItem = {
 }
 
 function PokemonCardItem({ to, pictureSrc, primaryName, secondaryName, onRelease }: PokemonCardItem) {
-  const component = (
+  if (to !== undefined) {
+    return (
+      <CardContainer>
+        {onRelease && <ReleaseButton onClick={onRelease}>&times;</ReleaseButton>}
+        <StyledLink to={to}>
+          <img src={pictureSrc} alt={`${primaryName}'s picture`} />
+          <PrimaryName>{primaryName}</PrimaryName>
+          {secondaryName && <SecondaryName>{secondaryName}</SecondaryName>}
+        </StyledLink>
+      </CardContainer>
+    )
+  }
+
+  return (
     <CardContainer>
       {onRelease && <ReleaseButton onClick={onRelease}>&times;</ReleaseButton>}
       <img src={pictureSrc} alt={`${primaryName}'s picture`} />
@@ -19,14 +32,6 @@ function PokemonCardItem({ to, pictureSrc, primaryName, secondaryName, onRelease
       {secondaryName && <SecondaryName>{secondaryName}</SecondaryName>}
     </CardContainer>
   )
-
-  if (to !== undefined) {
-    return (
-      <StyledLink to={to}>{component}</StyledLink>
-    )
-  }
-
-  return component
 }
 
 const CardContainer = styled.div(({ theme }) => ({
@@ -35,7 +40,7 @@ const CardContainer = styled.div(({ theme }) => ({
   display: 'flex',
   position: 'relative',
   flexDirection: 'column',
-  alignItems: 'center',
+  alignItems: 'stretch',
   justifyContent: 'center',
   border: `1px solid ${theme.baseBorderColor}`,
   borderRadius: '10px',
@@ -73,8 +78,14 @@ const SecondaryName = styled.div({
   fontSize: '0.875rem',
 })
 
-const StyledLink = styled(Link)({
+const StyledLink = styled(Link)(({ theme }) => ({
   textDecoration: 'none',
-})
+  display: 'flex',
+  flexDirection: 'column',
+  flexGrow: 1,
+  color: theme.blackColor,
+  alignItems: 'center',
+  justifyContent: 'center',
+}))
 
 export { PokemonCardItem }

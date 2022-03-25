@@ -41,9 +41,7 @@ function ModalButton({isCloseButton = false, ...props}: ModalButtonProps) {
     <StyledModalButton
       onClick={isCloseButton ? onClosed : props.onClick} 
       {...props}
-    >
-
-    </StyledModalButton>
+    />
   )
 }
 

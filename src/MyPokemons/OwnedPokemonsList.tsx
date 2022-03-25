@@ -48,6 +48,7 @@ function OwnedPokemonsList() {
           {pokemons.map((pokemon, idx) => (
             <PokemonCardItem
               key={idx}
+              to={`/pokemons/${pokemon.name}`}
               pictureSrc={pokemon.picture}
               primaryName={pokemon.nickname}
               secondaryName={capitalize(pokemon.name)}
@@ -56,47 +57,6 @@ function OwnedPokemonsList() {
                 nickname: pokemon.nickname,
               })}
             />
-            // <div
-            //   key={idx}
-            //   style={{
-            //     padding: '0.825rem 1rem',
-            //     display: 'flex',
-            //     alignItems: 'center',
-            //   }}
-            // >
-            //   <div
-            //     style={{
-            //       width: '50px',
-            //       height: '50px',
-            //       marginRight: '1rem',
-            //       backgroundImage: `url(${pokemon.picture})`,
-            //       backgroundPosition: 'center'
-            //     }}
-            //   >
-            //   </div>
-            //   <div
-            //     style={{
-            //       flexGrow: 1,
-            //     }}
-            //   >
-            //     <div>{pokemon.nickname}</div>
-            //     <div style={{
-            //       fontSize: '0.825rem',
-            //     }}>
-            //       {pokemon.name}
-            //     </div>
-            //   </div>
-            //   <button
-            //     onClick={() => {
-            //       setIsOpenModal({
-            //         type: 'opened',
-            //         nickname: pokemon.nickname,
-            //       })
-            //     }}
-            //   >
-            //     Release
-            //   </button>
-            // </div>
           ))}
         </div>
       </Scroller>
