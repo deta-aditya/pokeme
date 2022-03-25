@@ -13,10 +13,12 @@ type TabLinkProps = {
 function TabLink({ children, to, ...props}: TabLinkProps) {
   if (to !== undefined) {
     return (
-      <LinkContainer to={to} {...props}>
-        <RoundedCornerLeft {...props} />
-        {children}
-        <RoundedCornerRight {...props} />
+      <LinkContainer to={to}>
+        <PlainContainer {...props}>
+          <RoundedCornerLeft {...props} />
+          {children}
+          <RoundedCornerRight {...props} />
+        </PlainContainer>
       </LinkContainer>
     )
   }
@@ -31,40 +33,6 @@ function TabLink({ children, to, ...props}: TabLinkProps) {
 }
 
 type PropsForStyling = Omit<TabLinkProps, 'children' | 'to'>
-
-const LinkContainer = styled(Link)<PropsForStyling>(({ isActive, insideBackgroundColor, theme }) => ({
-  color: '#000',
-  position: 'relative',
-  padding: '0.5rem 1.25rem',
-  textDecoration: 'none',
-  border: '1px solid',
-  borderColor: isActive 
-    ? `${theme.baseBorderColor} ${theme.baseBorderColor} transparent` 
-    : `transparent transparent ${theme.baseBorderColor}`,
-  transform: 'translateY(1px)',
-  backgroundColor: isActive ? insideBackgroundColor : '',
-  borderRadius: '5px 5px 0 0',
-  '::before': {
-    content: '""',
-    display: isActive ? 'block' : 'none',
-    position: 'absolute',
-    left: '-5px',
-    bottom: '-1px',
-    width: '5px',
-    height: '5px',
-    backgroundColor: insideBackgroundColor,
-  },
-  '::after': {
-    content: '""',
-    display: isActive ? 'block' : 'none',
-    position: 'absolute',
-    right: '-5px',
-    bottom: '-1px',
-    width: '5px',
-    height: '5px',
-    backgroundColor: insideBackgroundColor,
-  },
-}))
 
 const PlainContainer = styled.div<PropsForStyling>(({ isActive, insideBackgroundColor, theme }) => ({
   color: '#000',
@@ -99,6 +67,11 @@ const PlainContainer = styled.div<PropsForStyling>(({ isActive, insideBackground
     backgroundColor: insideBackgroundColor,
   },
 }))
+
+const LinkContainer = styled(Link)({
+  position: 'relative',
+  textDecoration: 'none',
+})
 
 const RoundedCornerLeft = styled.div<PropsForStyling>(({ isActive, outsideBackgroundColor, theme }) => ({
   position: 'absolute',
