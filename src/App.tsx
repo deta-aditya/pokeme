@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { PokemonDetail } from './PokemonDetail'
 import { MyPokemons } from './MyPokemons'
+import { NotFound } from './NotFound'
 import { Home } from './Home'
 import { AppThemeProvider } from './contexts/app-theme'
 import { OwnedPokemonsProvider } from './contexts/owned-pokemons'
@@ -33,6 +34,7 @@ function App() {
                 <Route path="/" element={<Home/>} />
                 <Route path="/my-pokemons" element={<MyPokemons/>} />
                 <Route path="/pokemons/:name" element={<PokemonDetail />} />
+                <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
           </OwnedPokemonsProvider>
