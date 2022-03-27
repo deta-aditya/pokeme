@@ -16,12 +16,19 @@ import { PokemonMoves } from './PokemonMoves'
 
 function PokemonDetail() {
   const { name } = useParams<'name'>()
-  const { state: { pokemon, isLoading }, fetchDetails } = usePokemonDetailsResource()
+  const { state: { pokemon, isLoading, isNotFound }, fetchDetails } = usePokemonDetailsResource()
   useEffect(() => {
     if (name !== undefined) {
       fetchDetails(name)
     }
   }, [])
+  
+  const navigate = useNavigate()
+  useEffect(() => {
+    if (isNotFound) {
+      navigate('/404')
+    }
+  }, [isNotFound])
 
   const [isScrollPassed, setIsScrollPassed] = useState(false)
   const { scrollerRef, onScroll } = useScrollListener<HTMLDivElement>({ 
@@ -39,7 +46,6 @@ function PokemonDetail() {
   })
 
   const theme = useTheme()
-  const navigate = useNavigate()
 
   return (
     <PageContainer>

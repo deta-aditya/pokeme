@@ -3,6 +3,7 @@ import { PokemonDetailsData } from "../resources/types"
 
 type PokemonDetailsResourceState = {
   isLoading: boolean
+  isNotFound: boolean
   name?: string
   pokemon?: PokemonDetailsData
 }
@@ -10,9 +11,11 @@ type PokemonDetailsResourceState = {
 type PokemonDetailsResourceActions = 
   | { type: 'start-loading', name: string }
   | { type: 'done-loading', pokemon: PokemonDetailsData }
+  | { type: 'not-found', name: string }
 
 const initialState: PokemonDetailsResourceState = {
   isLoading: false,
+  isNotFound: false,
 }
 
 const reducer: Reducer<PokemonDetailsResourceState, PokemonDetailsResourceActions> = (state, action) => {
@@ -22,11 +25,19 @@ const reducer: Reducer<PokemonDetailsResourceState, PokemonDetailsResourceAction
         ...state,
         name: action.name,
         isLoading: true,
+        isNotFound: false,
       }
     case 'done-loading':
       return {
+        ...state,
         isLoading: false,
         pokemon: action.pokemon,
+      }
+    case 'not-found': 
+      return {
+        ...state,
+        isLoading: false,
+        isNotFound: true,
       }
   }
 }
@@ -61,6 +72,11 @@ export function PokemonDetailsResourceProvider({ children, getPokemonDetails }: 
     getPokemonDetails(name)
       .then((pokemon) => {
         dispatch({ type: 'done-loading', pokemon })
+      })
+      .catch((err) => {
+        if (err.message.includes('404')) {
+          dispatch({ type: 'not-found', name })
+        }
       })
   }
 

@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { PokemonDetail } from './PokemonDetail'
 import { MyPokemons } from './MyPokemons'
 import { NotFound } from './NotFound'
@@ -34,7 +34,8 @@ function App() {
                 <Route path="/" element={<Home/>} />
                 <Route path="/my-pokemons" element={<MyPokemons/>} />
                 <Route path="/pokemons/:name" element={<PokemonDetail />} />
-                <Route path="*" element={<NotFound />} />
+                <Route path="/404" element={<NotFound />} />
+                <Route path="*" element={<Navigate replace to="/404" />} />
               </Routes>
             </BrowserRouter>
           </OwnedPokemonsProvider>

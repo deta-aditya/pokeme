@@ -32,6 +32,7 @@ export const newGraphQLPokemonsResource = (uri: string) => {
           pokemon(name: $name) {
             id
             name
+            message
             sprites {
               front_default
             }
@@ -51,12 +52,32 @@ export const newGraphQLPokemonsResource = (uri: string) => {
       variables: {
         name,
       }
-    }).then(response => ({
-        name: response.data.pokemon.name,
-        picture: response.data.pokemon.sprites.front_default,
-        moves: response.data.pokemon.moves.map(({ move: { name } }: { move: { name: string }}) => name),
-        types: response.data.pokemon.types.map(({ type: { name } }: { type: { name: string }}) => name),
-      }) as unknown as PokemonDetailsData)
+    }).then(response => {
+        if (response.data.hasOwnProperty('errors')) {
+          const has404Error = response.data.errors
+            .map((error: { message: string }) => error.message)
+            .some((message: string) => message.includes('404'))
+
+          if (has404Error) {
+            return Promise.reject({
+              status: 404,
+              message: 'not found'
+            })
+          }
+
+          return Promise.reject({
+            status: 500,
+            message: 'internal error',
+          })
+        }
+
+        return {
+          name: response.data.pokemon.name,
+          picture: response.data.pokemon.sprites.front_default,
+          moves: response.data.pokemon.moves.map(({ move: { name } }: { move: { name: string }}) => name),
+          types: response.data.pokemon.types.map(({ type: { name } }: { type: { name: string }}) => name),
+        } as unknown as PokemonDetailsData
+      })
   }
 
   return {
