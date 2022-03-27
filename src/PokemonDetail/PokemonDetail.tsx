@@ -63,7 +63,7 @@ function PokemonDetail() {
           />
           <PokemonName />
           <PokemonTypes />
-          <CatchButtonDesktop />
+          <CatchButtonDesktop show={!isLoading} />
           <DetailsTabsMobile outsideBackgroundColor={theme.whiteColor} />
         </TopSection>
         <TabsSection>
@@ -77,6 +77,8 @@ function PokemonDetail() {
     </PageContainer>
   )
 }
+
+type Showable = { show: boolean }
 
 const PageContainer = styled.div(({ theme }) => ({
   display: 'flex',
@@ -152,10 +154,10 @@ const TabsSection = styled.div({
   flexGrow: 1,
 })
 
-const CatchButtonDesktop = styled(CatchButton)(({ theme }) => ({
+const CatchButtonDesktop = styled(CatchButton)<Showable>(({ theme, show }) => ({
   display: 'none',
   [onMediaQuery(theme.lg)]: {
-    display: 'inline-block',
+    display: show ? 'inline-block' : 'none',
     marginTop: '4rem',
   },
 }))
