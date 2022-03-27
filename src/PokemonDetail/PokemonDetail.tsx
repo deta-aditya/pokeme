@@ -13,7 +13,7 @@ import { Image } from '../Image'
 
 function PokemonDetail() {
   const { name } = useParams<'name'>()
-  const { state: { pokemon }, fetchDetails } = usePokemonDetailsResource()
+  const { state: { pokemon, isLoading }, fetchDetails } = usePokemonDetailsResource()
   useEffect(() => {
     if (name !== undefined) {
       fetchDetails(name)
@@ -53,7 +53,11 @@ function PokemonDetail() {
       </HeaderSection>
       <ContentSection ref={scrollerRef} onScroll={onScroll} >
         <TopSection>
-          <Image src={pokemon?.picture} alt={`${name}'s picture`} width={100} height={100} />
+          <Image 
+            src={pokemon?.picture} 
+            alt={`${name}'s picture`} width={100} height={100}
+            isLoading={isLoading}
+          />
           <h1>{pokemon?.name}</h1>
           <PokemonTypes>
             {pokemon?.types.map((type, idx) => (

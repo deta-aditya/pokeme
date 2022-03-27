@@ -1,13 +1,19 @@
 import styled from "@emotion/styled"
 import { useState } from "react"
 
-function Image(props: React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>) {
+type ImageProps = {
+  isLoading?: boolean
+} & React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>
+
+function Image({ isLoading = false, ...props }: ImageProps) {
   const [loaded, setLoaded] = useState(false)
+
+  const allLoaded = loaded && !isLoading
 
   return (
     <>
-      <Loading width={props.width} height={props.height} show={!loaded} />
-      <Img {...props} show={loaded} onLoad={() => setLoaded(true)}/>
+      <Loading width={props.width} height={props.height} show={!allLoaded} />
+      <Img {...props} show={allLoaded} onLoad={() => setLoaded(true)}/>
     </>
   )
 }
