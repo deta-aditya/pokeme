@@ -10,6 +10,9 @@ import { DetailsTabs } from "./DetailsTabs"
 import { useTheme } from "@emotion/react"
 import { usePokemonDetailsResource } from "../contexts/pokemon-details-resource"
 import { Image } from '../Image'
+import { PokemonName } from './PokemonName'
+import { PokemonTypes } from './PokemonTypes'
+import { PokemonMoves } from './PokemonMoves'
 
 function PokemonDetail() {
   const { name } = useParams<'name'>()
@@ -58,26 +61,18 @@ function PokemonDetail() {
             alt={`${name}'s picture`} width={100} height={100}
             isLoading={isLoading}
           />
-          <h1>{pokemon?.name}</h1>
-          <PokemonTypes>
-            {pokemon?.types.map((type, idx) => (
-              <div key={idx}>{type}</div>
-            ))}
-          </PokemonTypes>
-          {pokemon !== undefined && <CatchButtonDesktop pokemon={pokemon} />}
+          <PokemonName />
+          <PokemonTypes />
+          <CatchButtonDesktop />
           <DetailsTabsMobile outsideBackgroundColor={theme.whiteColor} />
         </TopSection>
         <TabsSection>
-          <DetailsTabsDesktop outsideBackgroundColor={'#ECECEC'}  />
-          <MovesSection>
-            {pokemon?.moves.map((move, idx) => (
-              <div key={idx}>{move.replace('-', ' ')}</div>
-            ))}
-          </MovesSection>
+          <DetailsTabsDesktop outsideBackgroundColor={'#ECECEC'} />
+          <PokemonMoves />
         </TabsSection>
       </ContentSection>
       <ButtonContainer>
-        {pokemon !== undefined && <CatchButton pokemon={pokemon} />}
+        <CatchButton />
       </ButtonContainer>
     </PageContainer>
   )
@@ -140,11 +135,6 @@ const TopSection = styled.div(({ theme }) => ({
   textTransform: 'capitalize',
   borderBottom: `1px solid ${theme.baseBorderColor}`,
   textAlign: 'center',
-  h1: {
-    textTransform: 'capitalize',
-    fontSize: '1.25rem',
-    margin: '0.5rem 0 0',
-  },
   img: {
     width: '100px',
   },
@@ -161,21 +151,6 @@ const TabsSection = styled.div({
   flexDirection: 'column',
   flexGrow: 1,
 })
-
-const PokemonTypes = styled.div(({ theme }) => ({
-  display: 'flex',
-  justifyContent: 'center',
-  gap: '0.5rem',
-  marginTop: '1.75rem',
-  div: {
-    padding: '0.375rem 0.875rem',
-    border: `1px solid ${theme.baseBorderColor}`,
-    borderRadius: '20px',
-    textTransform: 'capitalize',
-    fontSize: '0.875rem',
-    backgroundColor: theme.whiteColor,
-  }
-}))
 
 const CatchButtonDesktop = styled(CatchButton)(({ theme }) => ({
   display: 'none',
@@ -200,24 +175,6 @@ const DetailsTabsDesktop = styled(DetailsTabs)(({ theme }) => ({
     borderBottom: `1px solid ${theme.baseBorderColor}`,
     backgroundImage: theme.headerGradientColors,
   },
-}))
-
-const MovesSection = styled.div(({ theme }) => ({
-  display: 'flex',
-  margin: '1rem 0 4rem',
-  flexDirection: 'column',
-  '& > div': {
-    padding: '1rem 1.25rem',
-    textTransform: 'capitalize',
-    '&:not(:last-child)': {
-      borderBottom: `1px solid ${theme.baseBorderColor}`,
-    }
-  },
-  [onMediaQuery(theme.lg)]: {
-    overflowY: 'auto',
-    margin: 0,
-    padding: '1rem 0 1rem',
-  }
 }))
 
 const ButtonContainer = styled.footer(({ theme }) => ({

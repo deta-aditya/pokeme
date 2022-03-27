@@ -5,12 +5,13 @@ import { PokemonCardItem } from '../PokemonCardItem'
 import { capitalize } from '../utils/capitalizer'
 import { onMediaQuery } from "../contexts/app-theme"
 import { usePokemonIndexResource } from "../contexts/pokemon-index-resource"
+import { ListLoadingPlaceholder } from './ListLoadingPlaceholder'
 
 function PokemonsInfiniteList() {
   const { state: { pokemons }, fetchNextResource } = usePokemonIndexResource()
 
   const { scrollerRef, onScroll } = useScrollListener<HTMLDivElement>({
-    pxThreshold: 20,
+    pxThreshold: 150,
     fromBottom: true,
     onThresholdPassed: () => {
       fetchNextResource()
@@ -46,6 +47,7 @@ function PokemonsInfiniteList() {
             primaryName={capitalize(name)}
           />
         ))}
+        <ListLoadingPlaceholder />
       </div>
     </Scroller>
   )

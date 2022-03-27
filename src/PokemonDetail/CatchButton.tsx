@@ -1,23 +1,25 @@
 import styled from "@emotion/styled"
-import { useNavigate } from "react-router-dom"
 import { useOwnedPokemons } from "../contexts/owned-pokemons"
-import { PokemonDetailsData } from "../resources/types"
+import { usePokemonDetailsResource } from "../contexts/pokemon-details-resource"
 
 type CatchButtonProps = {
-  pokemon: PokemonDetailsData
   className?: string
 }
 
-function CatchButton({ pokemon, className }: CatchButtonProps) {
+function CatchButton({ className }: CatchButtonProps) {
   const { dispatch } = useOwnedPokemons()
+  const { state: { pokemon, isLoading } } = usePokemonDetailsResource()
 
   return (
     <Button
+      show={!isLoading}
       className={className}
       onClick={() => {
-        // let's find a way to purify this thing
-        const isCaught = Math.random() < 0.5
-        dispatch({ type: 'try-catch', pokemon, isCaught })
+        if (pokemon !== undefined) {
+          // let's find a way to purify this thing
+          const isCaught = Math.random() < 0.5
+          dispatch({ type: 'try-catch', pokemon, isCaught })
+        }
       }}
     >
       Catch!
@@ -25,7 +27,9 @@ function CatchButton({ pokemon, className }: CatchButtonProps) {
   )
 }
 
-const Button = styled.div(({ theme }) => ({
+type Showable = { show: boolean }
+
+const Button = styled.div<Showable>(({ theme, show }) => ({
   padding: '0.875rem 3.75rem',
   backgroundColor: theme.accentColor,
   fontWeight: 'bold',
@@ -33,6 +37,7 @@ const Button = styled.div(({ theme }) => ({
   borderRadius: '40px',
   cursor: 'pointer',
   transition: '0.15s',
+  display: show ? 'inline-block': 'none',
   '&:hover': {
     backgroundColor: theme.accentColorDark,
   }
