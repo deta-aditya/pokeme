@@ -1,6 +1,7 @@
 import styled from "@emotion/styled"
 import { Link } from "react-router-dom"
 import PokemonLogoSvg from '../assets/pokemon_logo_gray.svg'
+import { Image } from '../Image'
 
 type PokemonCardItem = {
   to?: string
@@ -16,7 +17,7 @@ function PokemonCardItem({ to, pictureSrc, primaryName, secondaryName, onRelease
       <CardContainer>
         {onRelease && <ReleaseButton onClick={onRelease}>&times;</ReleaseButton>}
         <StyledLink to={to}>
-          <img src={pictureSrc} alt={`${primaryName}'s picture`} />
+          <Image src={pictureSrc} alt={`${primaryName}'s picture`} width={75} height={75} />
           <PrimaryName>{primaryName}</PrimaryName>
           {secondaryName && <SecondaryName>{secondaryName}</SecondaryName>}
         </StyledLink>
@@ -27,7 +28,7 @@ function PokemonCardItem({ to, pictureSrc, primaryName, secondaryName, onRelease
   return (
     <CardContainer>
       {onRelease && <ReleaseButton onClick={onRelease}>&times;</ReleaseButton>}
-      <img src={pictureSrc} alt={`${primaryName}'s picture`} />
+      <Image src={pictureSrc} alt={`${primaryName}'s picture`} />
       <PrimaryName>{primaryName}</PrimaryName>
       {secondaryName && <SecondaryName>{secondaryName}</SecondaryName>}
     </CardContainer>
@@ -53,9 +54,6 @@ const CardContainer = styled.div(({ theme }) => ({
   backgroundRepeat: 'no-repeat',
   backgroundPosition: '45px 45px',
   boxShadow: '0px 2px 3px 0px #e0e0e0',
-  img: {
-    width: '75px',
-  }
 }))
 
 const ReleaseButton = styled.button(({ theme }) => ({

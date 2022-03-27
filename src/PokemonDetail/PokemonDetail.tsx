@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Link, useNavigate, useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { CatchResultModal } from './CatchResultModal'
 import { CatchButton } from './CatchButton'
 import styled from "@emotion/styled"
@@ -9,6 +9,7 @@ import { onMediaQuery } from "../contexts/app-theme"
 import { DetailsTabs } from "./DetailsTabs"
 import { useTheme } from "@emotion/react"
 import { usePokemonDetailsResource } from "../contexts/pokemon-details-resource"
+import { Image } from '../Image'
 
 function PokemonDetail() {
   const { name } = useParams<'name'>()
@@ -52,7 +53,7 @@ function PokemonDetail() {
       </HeaderSection>
       <ContentSection ref={scrollerRef} onScroll={onScroll} >
         <TopSection>
-          <img src={pokemon?.picture} alt={`${name}'s picture`} />
+          <Image src={pokemon?.picture} alt={`${name}'s picture`} width={100} height={100} />
           <h1>{pokemon?.name}</h1>
           <PokemonTypes>
             {pokemon?.types.map((type, idx) => (
