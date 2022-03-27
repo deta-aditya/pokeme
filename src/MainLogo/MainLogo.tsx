@@ -4,7 +4,7 @@ import PokemonLogoSvg from '../assets/pokemon_logo.svg'
 function MainLogo() {
   return (
     <TextLogo>
-      <PokemonLogo src={PokemonLogoSvg} alt="Pokemon logo" />
+      <PokemonLogo src={PokemonLogoSvg} alt="Pokemon logo" width={32} height={32} />
       Pokeme
     </TextLogo>
   )
