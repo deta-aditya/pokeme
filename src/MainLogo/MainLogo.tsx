@@ -3,23 +3,26 @@ import PokemonLogoSvg from '../assets/pokemon_logo.svg'
 
 function MainLogo() {
   return (
-    <TextLogo>
+    <Container>
       <PokemonLogo src={PokemonLogoSvg} alt="Pokemon logo" width={32} height={32} />
-      Pokeme
-    </TextLogo>
+      <TextLogo>Pokeme</TextLogo>
+    </Container>
   )
 }
 
-const TextLogo = styled.h1({
+const Container = styled.h1({
   margin: 0,
   display: 'flex',
   gap: '0.75rem',
-  fontSize: '1.5rem',
   alignItems: 'center',
 })
 
 const PokemonLogo = styled.img({
   width: '2rem'
+})
+
+const TextLogo = styled.span({
+  fontSize: '1.5rem',
 })
 
 export { MainLogo }

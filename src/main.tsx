@@ -2,12 +2,9 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import './index.css'
 import App from './App'
-import { Workbox } from 'workbox-window'
+import { registerSW } from 'virtual:pwa-register'
 
-if ('serviceWorker' in navigator) {
-  const wb = new Workbox('/sw.js')
-  wb.register()
-}
+registerSW({})
 
 ReactDOM.render(
   <React.StrictMode>
