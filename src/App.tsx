@@ -1,14 +1,27 @@
+import loadable from '@loadable/component'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
-import { PokemonDetail } from './PokemonDetail'
-import { MyPokemons } from './MyPokemons'
-import { NotFound } from './NotFound'
-import { Home } from './Home'
 import { AppThemeProvider } from './contexts/app-theme'
 import { OwnedPokemonsProvider } from './contexts/owned-pokemons'
 import { createLocalStorageOwnedPokemons } from "./storage/local-storage";
 import { PokemonIndexResourceProvider } from "./contexts/pokemon-index-resource";
 import { PokemonDetailsResourceProvider } from "./contexts/pokemon-details-resource";
 import { newGraphQLPokemonsResource } from './resources/pokemons-graphql'
+
+const Home = loadable(() => import('./Home'), {
+  resolveComponent: ({ Home }) => Home
+})
+
+const MyPokemons = loadable(() => import('./MyPokemons'), {
+  resolveComponent: ({ MyPokemons }) => MyPokemons
+})
+
+const PokemonDetail = loadable(() => import('./PokemonDetail'), {
+  resolveComponent: ({ PokemonDetail }) => PokemonDetail
+})
+
+const NotFound = loadable(() => import('./NotFound'), {
+  resolveComponent: ({ NotFound }) => NotFound
+})
 
 function App() {
   const { loadFromStorage, saveToStorage } = createLocalStorageOwnedPokemons([])
